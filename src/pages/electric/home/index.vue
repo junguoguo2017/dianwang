@@ -29,6 +29,7 @@
                     <div
                         class="list_item"
                         v-for="(item, index) in accounts"
+                        :key="index"
                         :class="{ m_l: index % 2 !== 0, m_r: index % 2 === 0 }"
                         @click="linktoPay(item)"
                         @touchstart="gtouchstart(item)"
