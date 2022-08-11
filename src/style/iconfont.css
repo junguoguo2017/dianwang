@@ -1,0 +1,28 @@
+@font-face {
+    font-family: 'iconfont';  /* project id 863898 */
+    src: url('//at.alicdn.com/t/font_863898_2dmc210cfzo.eot');
+    src: url('//at.alicdn.com/t/font_863898_2dmc210cfzo.eot?#iefix') format('embedded-opentype'),
+    url('//at.alicdn.com/t/font_863898_2dmc210cfzo.woff') format('woff'),
+    url('//at.alicdn.com/t/font_863898_2dmc210cfzo.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_863898_2dmc210cfzo.svg#iconfont') format('svg');
+}
+
+.iconfont {
+  font-family:"iconfont" !important;
+  font-size:16px;
+  font-style:normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.icon-yanjing:before{content:'\e62a'}
+.icon-fanhui:before{content:'\e620'}
+.icon-xuanzhong:before{content:'\e64f';font-size: 20px;color:#39B2FF}
+.icon-unchecked:before{content:'\e619';font-size: 20px;color:#39B2FF}
+.icon-loading:before{content:'\e64a';font-size: 30px;color:#999}
+.icon-top:before{content:'\e62c';font-size: 20px;}
+.icon-zhengyan:before{content:'\e60a';font-size: 20px;}
+.icon-biyan:before{content:'\e606';font-size: 20px;}
+.icon-arrow-right1:before{content:'\e600';font-size: 20px;color:#aaa}
+.icon-More:before{content:'\e60c';font-size: 20px;color:#fff}
+.icon-jiantou8:before{content:'\e60b';font-size: 20px;color:#666}
+

@@ -1,0 +1,47 @@
+/*复制禁用*/
+*{
+   /* -webkit-touch-callout:none;  !*系统默认菜单被禁用*!
+    -webkit-user-select:none; !*webkit浏览器*!
+    -khtml-user-select:none; !*早期浏览器*!
+    -moz-user-select:none; !*火狐*!
+    -ms-user-select:none;  !*IE10*!
+    user-select:none;*/
+}
+input,textarea {/*ios禁用复制input bug解决*/
+  /*  -webkit-user-select:auto; *//*webkit浏览器*/
+}
+
+
+a,button,input,textarea{
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+div{
+  -webkit-overflow-scrolling : touch
+}
+.slide-right-enter-active,
+.slide-right-leave-active,
+.slide-left-enter-active,
+.slide-left-leave-active {
+    will-change: transform;
+    transition: all 500ms;
+    height: 100%;
+    position: absolute;
+    backface-visibility: hidden;
+    perspective: 1000;
+}
+.slide-right-enter {
+    opacity: 0;
+    transform: translate3d(-100%, 0, 0);
+}
+.slide-right-leave-active {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
+}
+.slide-left-enter {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
+}
+.slide-left-leave-active {
+    opacity: 0;
+    transform: translate3d(-100%, 0, 0);
+}

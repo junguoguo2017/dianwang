@@ -1,0 +1,82 @@
+html,body {
+  margin: 0;
+  padding: 0;
+
+}
+div,ul,li,ol,dl,dd,dt,p,h1,h2,h3,h4,h5,h6,form,fieldset,legend,img{
+    margin: 0;
+    padding: 0;
+
+}
+h1,h2,h3,h4,h5,h6{
+    font-weight: normal;
+    line-height: 1em;
+ }
+
+textarea, input{
+    font-size: 0.28rem;
+    border: none;
+    outline: none;
+    padding: 0;
+}
+i{
+    font-style: normal;
+}
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+    color: #a9a9a9;
+    font-size: 0.28rem;
+}
+input:-moz-placeholder, textarea:-moz-placeholder {
+    color: #a9a9a9;
+    font-size: 0.28rem;
+}
+input::-moz-placeholder, textarea::-moz-placeholder {
+    color: #a9a9a9;
+    font-size:  0.28rem;
+}
+input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+    color: #a9a9a9;
+    font-size: 0.24rem;
+}
+span, p, button, a{
+  font-size: 0.24rem;
+
+}
+img{
+  border: 0;
+}
+.fl{
+  float: left;
+}
+.fr{
+  float: right;
+}
+.clearfix:after{
+  content:'';
+  height: 0;
+  clear: both;
+  display: block;
+  zoom: 1;
+}
+a{
+    text-decoration: none;
+}
+li{
+    list-style: none;
+}
+.text_ellipsis{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/**移动端开启gpu硬件加速**/
+.mobile_gpu_speed{
+    -webkit-transform: translateZ(0);
+    -moz-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    -o-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+
