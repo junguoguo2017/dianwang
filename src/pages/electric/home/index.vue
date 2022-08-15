@@ -220,6 +220,10 @@ export default {
                     await this.getWxOauth();
                 } else if (type === 2) {
                     await this.getAliOauth();
+                } else {
+                    this.$showToast({
+                        message: "请在微信或者支付宝中打开"
+                    });
                 }
             } else {
                 localStorage.setItem("uid", uid);
@@ -278,8 +282,6 @@ export default {
                     scopes: ["auth_user"]
                 },
                 res => {
-                    console.log(res);
-                    // this.aliAuthCode = res.authCode;
                     aliOauth({
                         authCode: res.authCode
                     }).then(res => {
