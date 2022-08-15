@@ -13,7 +13,7 @@ Vue.use(vConsole); //设为全局
 
 if (process.env.NODE_ENV == "development") {
     /*开发环境域名写固定*/
-    domainUrl = "http://dianwang.2020hhzf.com"; //document.location.host;
+    domainUrl = "https://dianwang.2020hhzf.com"; //document.location.host;
 }
 export const baseURL =
     process.env.NODE_ENV == "development" ? "/dev-api/api" : domainUrl + "/api";
@@ -21,7 +21,7 @@ export const service = axios.create({
     baseURL: baseURL,
     timeout: 15000
 });
-var agent = getQuery()["agent"]
+const agent = getQuery()["agent"]
     ? getQuery()["agent"]
     : localStorage.agent
     ? localStorage.agent
@@ -41,11 +41,13 @@ service.interceptors.request.use(
         if (config.method == "post") {
             config.data = {
                 ...config.data,
+                agent,
                 uid: store.state.uid
             };
         } else if (config.method == "get") {
             config.params = {
                 ...config.params,
+                agent,
                 uid: store.state.uid
             };
         }
@@ -69,6 +71,18 @@ service.interceptors.response.use(
 
         if (res.code === 200) {
             return response.data;
+        } else if (res.code === 401) {
+            store.state.self.$dialog
+                .alert({
+                    title: "提示",
+                    message: "登录失效，重新授权"
+                })
+                .then(() => {
+                    localStorage.clear();
+                    store.state.self.$router.push("/index");
+                });
+
+            return;
         }
 
         store.state.self.$showToast({

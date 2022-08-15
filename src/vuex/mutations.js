@@ -66,40 +66,13 @@ export default {
     },
     getAgentCode(state) {
         //获取代理人推广码
-        var agent = getQuery()["agent"]
+        const agent = getQuery()["agent"]
             ? getQuery()["agent"]
             : localStorage.agent
             ? localStorage.agent
             : "";
-        if (agent != "") {
-            /*校验agent状态*/
-            agentStatus().then(res => {
-                if (res.code == 1) {
-                    /*代理可用*/
-                    if (getQuery()["agent"]) {
-                        //地址栏传参
-                        state.agent = agent;
-                        localStorage.agent = agent;
-                    } else {
-                        let toQuery = JSON.parse(
-                            JSON.stringify(router.app.$route.query)
-                        );
-                        toQuery.agent = agent;
-                        router.app.$router.replace({
-                            name: router.app.$route.name,
-                            query: toQuery
-                        });
-                    }
-                } else {
-                    state.agent = "";
-                    localStorage.removeItem("agent");
-                    var noavalibleAgent = res.data.go_url;
-                    window.location.href = noavalibleAgent;
-                }
-            });
-        } else {
-            state.agent = "";
-        }
+        state.agent = agent;
+        localStorage.agent = agent;
     },
     /*获取token*/
     getToken(state, val) {

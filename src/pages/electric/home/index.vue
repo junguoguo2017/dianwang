@@ -69,23 +69,27 @@
                     <span class="title_l">缴费享优惠</span>
                 </div>
                 <div class="discountsWrap">
-                    <div class="discounts_item">
-                        <div class="discounts_item_tag">立减1.00元</div>
+                    <div
+                        @click="
+                            $router.push({
+                                path: '/paycost',
+                                amount: item.originalAmount
+                            })
+                        "
+                        class="discounts_item"
+                        v-for="(item, index) in discounts.slice(0, 3)"
+                        :key="index"
+                    >
+                        <div class="discounts_item_tag">
+                            立减{{
+                                (item.originalAmount - item.amount).toFixed(2)
+                            }}元
+                        </div>
                         <div class="hot_tag">热</div>
-                        <span style="font-size: 0.28rem">50.00元</span>
-                        <span class="card_name">金燕卡</span>
-                    </div>
-                    <div class="discounts_item" style="margin-left: 0.2rem">
-                        <div class="discounts_item_tag">立减1.00元</div>
-                        <div class="hot_tag">热</div>
-                        <span style="font-size: 0.28rem">50.00元</span>
-                        <span class="card_name">金燕卡</span>
-                    </div>
-                    <div class="discounts_item" style="margin-left: 0.2rem">
-                        <div class="discounts_item_tag">立减1.00元</div>
-                        <div class="hot_tag">热</div>
-                        <span style="font-size: 0.28rem">50.00元</span>
-                        <span class="card_name">金燕卡</span>
+                        <span style="font-size: 0.28rem"
+                            >{{ item.originalAmount }}元</span
+                        >
+                        <span class="card_name">优惠券</span>
                     </div>
                 </div>
             </div>
@@ -132,9 +136,10 @@ import {
     accountRecord,
     delOneAccount,
     getHomeInit,
-    weixinOauth
+    weixinOauth,
+    aliOauth
 } from "@/api/cost";
-import { getQuery } from "@/js/util";
+import { getQuery, isWxOrAli } from "@/js/util";
 export default {
     data() {
         return {
@@ -157,33 +162,37 @@ export default {
             ],
             isWechatBrowser: false,
             notice: "",
-            accounts: []
+            accounts: [],
+            discounts: []
         };
     },
     beforeRouteEnter(to, from, next) {
         next(vm => {
             /*判断是否是在微信内部*/
 
-            if (typeof WeixinJSBridge == "undefined") {
-                if (document.addEventListener) {
-                    document.addEventListener(
-                        "WeixinJSBridgeReady",
-                        function() {
-                            vm.initUid();
-                        },
-                        false
-                    );
-                } else if (document.attachEvent) {
-                    document.attachEvent("WeixinJSBridgeReady", function() {
-                        vm.initUid();
-                    });
-                    document.attachEvent("onWeixinJSBridgeReady", function() {
-                        vm.initUid();
-                    });
-                }
-            } else {
-                vm.initUid();
-            }
+            // if (typeof WeixinJSBridge == "undefined") {
+            //     if (document.addEventListener) {
+            //         document.addEventListener(
+            //             "WeixinJSBridgeReady",
+            //             function() {
+            //                 vm.isWechatBrowser = true;
+            //             },
+            //             false
+            //         );
+            //     } else if (document.attachEvent) {
+            //         document.attachEvent("WeixinJSBridgeReady", function() {
+            //             vm.isWechatBrowser = true;
+            //         });
+            //         document.attachEvent("onWeixinJSBridgeReady", function() {
+            //             vm.isWechatBrowser = true;
+            //         });
+            //     }
+            // } else {
+            //     vm.isWechatBrowser = true;
+            // }
+
+            const type = isWxOrAli();
+            vm.initUid(type);
         });
     },
     async created() {
@@ -199,8 +208,7 @@ export default {
     },
 
     methods: {
-        async initUid() {
-            this.isWechatBrowser = true;
+        async initUid(type) {
             const existUid = localStorage.getItem("uid");
             if (existUid) {
                 this.$store.dispatch("init", { self: this });
@@ -208,10 +216,14 @@ export default {
             }
             const { uid } = getQuery();
             if (!uid) {
-                await this.getOauth();
+                if (type === 1) {
+                    await this.getWxOauth();
+                } else if (type === 2) {
+                    await this.getAliOauth();
+                }
             } else {
                 localStorage.setItem("uid", uid);
-                this.$store.dispatch("init", { self: this });
+                this.$store.dispatch("init");
             }
         },
         clickCommend(e) {
@@ -232,6 +244,7 @@ export default {
             await getHomeInit().then(res => {
                 this.bannerList = res.data.indexBanners;
                 this.notice = res.data.notice;
+                this.discounts = res.data.discounts;
             });
         },
         getaccountRecord() {
@@ -253,10 +266,28 @@ export default {
                 }
             });
         },
-        async getOauth() {
+        async getWxOauth() {
             await weixinOauth().then(res => {
                 window.location.href = res.data.authorizationUrl;
             });
+        },
+        async getAliOauth() {
+            ap.getAuthCode(
+                {
+                    appId: "2021003143699246",
+                    scopes: ["auth_user"]
+                },
+                res => {
+                    console.log(res);
+                    // this.aliAuthCode = res.authCode;
+                    aliOauth({
+                        authCode: res.authCode
+                    }).then(res => {
+                        localStorage.setItem("uid", res.data.uid);
+                        this.$store.dispatch("init");
+                    });
+                }
+            );
         },
 
         //长按事件（起始）
@@ -383,6 +414,7 @@ export default {
                 border-radius: 0.2rem;
                 position: relative;
                 border: 1px solid #eee;
+                margin: 0 0.1rem;
                 .card_name {
                     margin-top: 0.1rem;
                     font-size: 0.2rem;
@@ -440,6 +472,7 @@ export default {
     align-items: center;
     height: 0.6rem;
     padding-left: 0.3rem;
+    box-sizing: border-box;
 }
 .marquee-box {
     position: relative;

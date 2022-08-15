@@ -12,9 +12,9 @@ module.exports = {
             //本地测试接口
 
             "/dev-api": {
-                target: "http://dianwang.2020hhzf.com",
-                pathRewrite: { "^/dev-api": "" }, //重写path: base api/base url
-            },
+                target: "https://dianwang.2020hhzf.com",
+                pathRewrite: { "^/dev-api": "" } //重写path: base api/base url
+            }
         },
 
         // Various Dev Server settings
@@ -36,7 +36,7 @@ module.exports = {
         // set this to false - it *may* help
         // https://vue-loader.vuejs.org/en/options.html#cachebusting
         cacheBusting: true,
-        cssSourceMap: true,
+        cssSourceMap: true
     },
 
     build: {
@@ -67,6 +67,6 @@ module.exports = {
         // View the bundle analyzer report after build finishes:
         // `npm run build --report`
         // Set to `true` or `false` to always turn it on or off
-        bundleAnalyzerReport: process.env.npm_config_report,
-    },
+        bundleAnalyzerReport: process.env.npm_config_report
+    }
 };

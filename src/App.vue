@@ -146,13 +146,11 @@ export default {
             });
         },
         loadMore() {
-            console.log(1111112);
             if (this.$refs.routerView.loadMore) {
                 this.$refs.routerView.loadMore();
             }
         },
         refresh(done) {
-            console.log(2222222);
             if (this.$refs.routerView.refresh) {
                 //下拉刷新
                 this.$refs.routerView.refresh(done);

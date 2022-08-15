@@ -206,15 +206,14 @@
 </template>
 
 <script>
-import { setCookie, getCookie, delCookie, getQuery } from "@/js/util";
-import sdk from "@/js/wxSdk";
 import {
-    agentAddOrder,
-    payOrder,
-    agentgetOneCategory,
-    wecahtshareSuccess,
-    getOrderXq
-} from "@/api/api";
+    setCookie,
+    getCookie,
+    delCookie,
+    getQuery,
+    isWxOrAli
+} from "@/js/util";
+import sdk from "@/js/wxSdk";
 
 import { queryOneAccount, prePay } from "@/api/cost";
 
@@ -227,6 +226,7 @@ function isWchatBrowser() {
         return false;
     }
 }
+
 const money = [
     {
         label: "100元",
@@ -267,33 +267,36 @@ export default {
             selectedCost: money[0].value,
             electricity: require("@/assets/electricity/electricity-icon.png"),
             account: {},
-            safeKeyboardVisible: false
+            safeKeyboardVisible: false,
+            typeSource: 1 // 1微信 2支付宝
         };
     },
     beforeRouteEnter(to, from, next) {
         next(vm => {
             /*判断是否是在微信内部*/
 
-            if (typeof WeixinJSBridge == "undefined") {
-                if (document.addEventListener) {
-                    document.addEventListener(
-                        "WeixinJSBridgeReady",
-                        function() {
-                            vm.initUserWechat();
-                        },
-                        false
-                    );
-                } else if (document.attachEvent) {
-                    document.attachEvent("WeixinJSBridgeReady", function() {
-                        vm.initUserWechat();
-                    });
-                    document.attachEvent("onWeixinJSBridgeReady", function() {
-                        vm.initUserWechat();
-                    });
-                }
-            } else {
-                vm.initUserWechat();
-            }
+            // if (typeof WeixinJSBridge == "undefined") {
+            //     if (document.addEventListener) {
+            //         document.addEventListener(
+            //             "WeixinJSBridgeReady",
+            //             function() {
+            //                 vm.initUserWechat();
+            //             },
+            //             false
+            //         );
+            //     } else if (document.attachEvent) {
+            //         document.attachEvent("WeixinJSBridgeReady", function() {
+            //             vm.initUserWechat();
+            //         });
+            //         document.attachEvent("onWeixinJSBridgeReady", function() {
+            //             vm.initUserWechat();
+            //         });
+            //     }
+            // } else {
+            //     vm.initUserWechat();
+            // }
+
+            vm.typeSource = isWxOrAli();
         });
     },
 
@@ -333,50 +336,55 @@ export default {
                 });
                 return;
             }
+
+            const pat = /^[1-9]+\d*(\.\d{0,2})?$|^0?\.\d{0,2}$/;
+            if (!pat.test(this.selectedCost)) {
+                this.$showToast({
+                    message: "请输入正确的金额",
+                    type: "fail"
+                });
+
+                return;
+            }
             const typeSource =
-                this.current_Apply_type === 2
+                this.typeSource === 1
                     ? "weixin"
-                    : this.current_Apply_type === 1
+                    : this.typeSource === 2
                     ? "alipay"
                     : "";
             const params = {
                 id: this.account.id,
                 totalAmount: this.selectedCost,
-                typeSource,
-                inWechat: this.isWechatBrowser
+                typeSource
             };
             prePay(params).then(res => {
-                if (res.code == 401) {
-                    this.$dialog
-                        .alert({
-                            title: "提示",
-                            message: "登录失效，重新授权"
-                        })
-                        .then(() => {
-                            this.reGetUid();
-                        });
-
-                    return;
-                }
-
-                if (this.isWechatBrowser) {
-                    //判断是否是微信浏览器，直接调用微信内支付
-                    //微信内部
+                if (this.typeSource == 1) {
                     this.wChat_in_Apply(JSON.parse(res.data.pay));
-                } else {
+                } else if (this.typeSource === 2) {
                     this.pay_con = res.data.pay;
-                    if (this.current_Apply_type == 1) {
-                        this.$nextTick(() => {
-                            //支付宝
-                            document.forms["alipaysubmit"].submit();
-                        });
-                    } else if (this.current_Apply_type == 2) {
-                        this.$nextTick(() => {
-                            //微信
-                            document.forms["wepaysubmit"].submit();
-                        });
-                    }
+                    this.$nextTick(() => {
+                        //支付宝
+                        document.forms["alipaysubmit"].submit();
+                    });
                 }
+                // if (this.isWechatBrowser) {
+                //     //判断是否是微信浏览器，直接调用微信内支付
+                //     //微信内部
+                //     this.wChat_in_Apply(JSON.parse(res.data.pay));
+                // } else {
+                //     this.pay_con = res.data.pay;
+                //     if (this.current_Apply_type == 1) {
+                //         this.$nextTick(() => {
+                //             //支付宝
+                //             document.forms["alipaysubmit"].submit();
+                //         });
+                //     } else if (this.current_Apply_type == 2) {
+                //         this.$nextTick(() => {
+                //             //微信
+                //             document.forms["wepaysubmit"].submit();
+                //         });
+                //     }
+                // }
             });
         },
         handleSelectedCost(item) {
@@ -453,7 +461,7 @@ export default {
             this.current_Apply_type = type;
         },
         paybtn() {
-            if (this.isWechatBrowser) {
+            if (this.typeSource !== 0) {
                 this.paycost();
             } else {
                 this.applyShow = true;
