@@ -66,13 +66,7 @@ export default {
     },
     getAgentCode(state) {
         //获取代理人推广码
-        const agent = getQuery()["agent"]
-            ? getQuery()["agent"]
-            : localStorage.agent
-            ? localStorage.agent
-            : "";
-        state.agent = agent;
-        localStorage.agent = agent;
+        state.agent = localStorage.agent;
     },
     /*获取token*/
     getToken(state, val) {

@@ -7,14 +7,9 @@
         </carousel>
         <div id="box" ref="box">
             <img style="width: 12px; height: 12px" :src="notice_icon" alt="" />
-            <div
-                class="marquee-box"
-                ref="marquee"
-                @mouseover="menter"
-                @mouseleave="mleave"
-            >
+            <div class="marquee-box" ref="marquee">
                 <p ref="cmdlist" id="pWidth">
-                    {{ this.notice }}
+                    {{ this.notice || "广播" }}
                 </p>
             </div>
         </div>
@@ -143,10 +138,6 @@ import { getQuery, isWxOrAli } from "@/js/util";
 export default {
     data() {
         return {
-            value: 0,
-            timer: "", //计时器
-            pwidth: 0, //公告文本的宽度
-            windowWidth: document.documentElement.clientWidth, // 设备屏幕的宽度
             electricity: require("@/assets/electricity/electricity-icon.png"),
             add_h_icon: require("@/assets/electricity/add_h_icon.png"),
             notice_icon: require("@/assets/electricity/notice.png"),
@@ -195,26 +186,42 @@ export default {
             vm.initUid(type);
         });
     },
+    beforeRouteLeave(to, from, next) {
+        this.paomatimer && clearInterval(this.paomatimer);
+        this.timeOutEvent && clearInterval(this.timeOutEvent);
+        next();
+    },
     async created() {
         await this.getBannerData();
         this.getaccountRecord();
     },
     mounted() {
-        let element = this.$refs.cmdlist;
-        this.pwidth = document.defaultView
-            .getComputedStyle(element, "")
-            .width.split("px");
-        this.timer = setInterval(this.clickCommend, 20);
+        const p_w = this.$refs.marquee.offsetWidth;
+        let left = 0;
+        this.paomatimer = setInterval(() => {
+            left--;
+
+            if (-left >= this.$refs.cmdlist.offsetWidth) {
+                left = p_w;
+            }
+            this.$refs.cmdlist.style.marginLeft = left + "px";
+        }, 20);
     },
 
     methods: {
         async initUid(type) {
+            const { uid, agent } = getQuery();
             const existUid = localStorage.getItem("uid");
+            /*校验推广代理人id*/
+            if (agent) {
+                localStorage.setItem("agent", agent);
+            }
+            this.$store.commit("getAgentCode");
             if (existUid) {
                 this.$store.dispatch("init", { self: this });
                 return;
             }
-            const { uid } = getQuery();
+
             if (!uid) {
                 if (type === 1) {
                     await this.getWxOauth();
@@ -230,20 +237,7 @@ export default {
                 this.$store.dispatch("init");
             }
         },
-        clickCommend(e) {
-            let _this = this;
-            this.$nextTick(() => {
-                this.value -= 1;
-                this.$refs.cmdlist.style.marginLeft =
-                    _this.windowWidth + this.value + "px";
-            });
-        },
-        menter() {
-            clearInterval(this.timer);
-        },
-        mleave() {
-            this.timer = setInterval(this.clickCommend, 20);
-        },
+
         async getBannerData() {
             await getHomeInit().then(res => {
                 this.bannerList = res.data.indexBanners;
@@ -330,20 +324,6 @@ export default {
                         }
                     });
                 });
-        }
-    },
-    beforeDestroy() {
-        clearInterval(this.timeOutEvent);
-        clearInterval(this.timer);
-    },
-    watch: {
-        value(newValue, oldValue) {
-            let allWidth =
-                parseInt(this.windowWidth) + parseInt(this.pwidth[0]);
-            if (newValue <= -allWidth) {
-                this.$refs.cmdlist.style.marginLeft = this.windowWidth + "px";
-                this.value = 0;
-            }
         }
     }
 };
@@ -483,13 +463,11 @@ export default {
     overflow: auto;
 }
 #pWidth {
-    width: 100%;
     height: 0.6rem;
     line-height: 0.6rem;
     padding: 0;
     margin: 0;
-
-    display: block;
+    display: inline-block;
     word-break: keep-all;
     white-space: nowrap;
     overflow: hidden;

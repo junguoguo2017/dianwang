@@ -117,8 +117,6 @@ export default {
             this.$store.commit("INIT", { self: this, ...clientData });
         } catch (e) {}
 
-        /*校验推广代理人id*/
-        this.$store.commit("getAgentCode");
         /*初始化个人信息*/
         this.$store.commit("getUserInfo");
         //软键盘收起的事件处理

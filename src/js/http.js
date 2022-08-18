@@ -21,11 +21,7 @@ export const service = axios.create({
     baseURL: baseURL,
     timeout: 15000
 });
-const agent = getQuery()["agent"]
-    ? getQuery()["agent"]
-    : localStorage.agent
-    ? localStorage.agent
-    : "";
+
 let req_toast = null;
 // request拦截器
 service.interceptors.request.use(
@@ -41,13 +37,13 @@ service.interceptors.request.use(
         if (config.method == "post") {
             config.data = {
                 ...config.data,
-                agent,
+                agent: store.state.agent,
                 uid: store.state.uid
             };
         } else if (config.method == "get") {
             config.params = {
                 ...config.params,
-                agent,
+                agent: store.state.agent,
                 uid: store.state.uid
             };
         }
@@ -78,7 +74,7 @@ service.interceptors.response.use(
                     message: "登录失效，重新授权"
                 })
                 .then(() => {
-                    localStorage.clear();
+                    localStorage.removeItem("uid");
                     store.state.self.$router.push("/index");
                 });
 
