@@ -10,7 +10,11 @@
         ></div>
         <div style="margin-top: -2.3rem; margin: -2.4rem 0.3rem 0 0.3rem">
             <div style="display: flex">
-                <img :src="electricity" style="width: 0.4rem" alt="" />
+                <img
+                    :src="electricity"
+                    style="width: 0.4rem;height:0.4rem"
+                    alt=""
+                />
                 <span
                     style="font-size: 0.3rem; color: #fff; margin-left: 0.2rem"
                     >电费</span
@@ -142,8 +146,10 @@
                         >x</span
                     >
                 </div>
-                <div style="font-size: 0.2rem; color: #999; margin-top: 0.1rem">
-                    缴费金额请输入整数，如有欠费，缴费金额需大于欠费金额！
+                <div
+                    style="font-size: 0.24rem; color: #999; margin-top: 0.1rem"
+                >
+                    缴费金额请输入整数（可自定义输入），如有欠费，缴费金额需大于欠费金额！
                 </div>
             </div>
         </div>

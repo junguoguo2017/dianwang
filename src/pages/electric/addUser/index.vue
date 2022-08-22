@@ -3,7 +3,11 @@
         <div class="topbanner"></div>
         <div class="formwrap">
             <div class="title" style="">
-                <img :src="electricity" style="width: 0.4rem" alt="" />
+                <img
+                    :src="electricity"
+                    style="width: 0.4rem;height:0.4rem"
+                    alt=""
+                />
                 <span class="title_label">电费</span>
             </div>
             <div class="formwrap_con">
