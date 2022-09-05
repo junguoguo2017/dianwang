@@ -67,7 +67,7 @@
                     <div
                         @click="
                             $router.push({
-                                path: '/paycost',
+                                path: '/paycost/pay',
                                 amount: item.originalAmount
                             })
                         "
@@ -258,7 +258,7 @@ export default {
         },
         linktoPay(item) {
             this.$router.push({
-                path: "paycost",
+                path: "/paycost/pay",
                 query: {
                     id: item.id
                 }

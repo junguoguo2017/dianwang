@@ -235,7 +235,7 @@ const electric = [
         component: () => import("@/pages/electric/agree/life.vue")
     },
     {
-        path: "/paycost",
+        path: "/paycost/pay",
         name: "paycost",
         meta: {
             keepAlive: false,

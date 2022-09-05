@@ -229,7 +229,7 @@ export default {
             }
             this.addAccount(id => {
                 this.$router.push({
-                    path: "/paycost",
+                    path: "/paycost/pay",
                     query: {
                         id
                     }
